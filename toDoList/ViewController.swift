@@ -106,7 +106,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             do{
                 let result = try context.fetch(fetchRequest)
-                if result.count > 0{
+                if result.count > 0 {
                     for item in result as! [NSManagedObject] {
                         if let id = item.value(forKey: "id") as? UUID{
                             if id == idArray[indexPath.row]{

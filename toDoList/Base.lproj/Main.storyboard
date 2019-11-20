@@ -71,11 +71,20 @@
                                     <action selector="saveClicked:" destination="U1l-RV-SQb" eventType="touchUpInside" id="9cU-eB-o2X"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KkJ-pg-GqM">
+                                <rect key="frame" x="20" y="380" width="374" height="30"/>
+                                <state key="normal" title="Update"/>
+                                <connections>
+                                    <action selector="saveClicked:" destination="U1l-RV-SQb" eventType="touchUpInside" id="Gqk-0f-AuE"/>
+                                    <action selector="updateClicked:" destination="U1l-RV-SQb" eventType="touchUpInside" id="lgd-W6-fnk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="kCP-P8-bPy" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="BRo-rb-m0e" secondAttribute="trailing" id="0aV-13-caS"/>
                             <constraint firstItem="kCP-P8-bPy" firstAttribute="top" secondItem="0Lx-z1-a54" secondAttribute="bottom" constant="8" id="GfO-2R-azO"/>
+                            <constraint firstItem="KkJ-pg-GqM" firstAttribute="trailing" secondItem="dvt-BM-Fcf" secondAttribute="trailing" id="HRz-NE-pdT"/>
                             <constraint firstItem="0Lx-z1-a54" firstAttribute="centerX" secondItem="kCP-P8-bPy" secondAttribute="centerX" id="Iz7-FY-FLL"/>
                             <constraint firstItem="0Lx-z1-a54" firstAttribute="leading" secondItem="xok-Ru-JBk" secondAttribute="leading" id="NXL-el-hQj"/>
                             <constraint firstItem="dvt-BM-Fcf" firstAttribute="top" secondItem="BRo-rb-m0e" secondAttribute="bottom" constant="8" id="QoP-dr-UhX"/>
@@ -86,10 +95,12 @@
                             <constraint firstItem="kCP-P8-bPy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8KY-lH-yRV" secondAttribute="leadingMargin" id="b6M-LP-eoa"/>
                             <constraint firstItem="BRo-rb-m0e" firstAttribute="leading" secondItem="8KY-lH-yRV" secondAttribute="leadingMargin" id="bJO-vj-942"/>
                             <constraint firstItem="kCP-P8-bPy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="BRo-rb-m0e" secondAttribute="leading" id="dje-3d-Js7"/>
+                            <constraint firstItem="KkJ-pg-GqM" firstAttribute="leading" secondItem="dvt-BM-Fcf" secondAttribute="leading" id="eHi-wJ-980"/>
                             <constraint firstItem="BRo-rb-m0e" firstAttribute="top" secondItem="kCP-P8-bPy" secondAttribute="bottom" constant="8" id="mZz-eD-Ma0"/>
                             <constraint firstItem="xok-Ru-JBk" firstAttribute="bottom" secondItem="dvt-BM-Fcf" secondAttribute="bottom" constant="452" id="qgg-ja-foO"/>
                             <constraint firstItem="BRo-rb-m0e" firstAttribute="leading" secondItem="dvt-BM-Fcf" secondAttribute="leading" id="uEU-8P-QXk"/>
                             <constraint firstItem="BRo-rb-m0e" firstAttribute="trailing" secondItem="dvt-BM-Fcf" secondAttribute="trailing" id="uhh-ii-Djh"/>
+                            <constraint firstItem="KkJ-pg-GqM" firstAttribute="baseline" secondItem="dvt-BM-Fcf" secondAttribute="baseline" id="wrX-V5-DPT"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xok-Ru-JBk"/>
                     </view>
@@ -97,7 +108,9 @@
                     <connections>
                         <outlet property="contentText" destination="BRo-rb-m0e" id="GRa-pc-Doz"/>
                         <outlet property="image" destination="0Lx-z1-a54" id="wkX-oO-riy"/>
+                        <outlet property="saveButton" destination="dvt-BM-Fcf" id="Hga-Jn-rvZ"/>
                         <outlet property="titleText" destination="kCP-P8-bPy" id="5KJ-JF-EnE"/>
+                        <outlet property="updateButton" destination="KkJ-pg-GqM" id="nO1-Jl-C0d"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AJa-Lg-VCz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

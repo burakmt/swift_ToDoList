@@ -14,6 +14,8 @@ class AddToDoController: UIViewController, UIImagePickerControllerDelegate, UINa
     @IBOutlet weak var image: UIImageView!
     @IBOutlet weak var titleText: UITextField!
     @IBOutlet weak var contentText: UITextField!
+    @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet weak var updateButton: UIButton!
     
     var choisenToDo = ""
     var choisenToDoID : UUID?
@@ -23,6 +25,8 @@ class AddToDoController: UIViewController, UIImagePickerControllerDelegate, UINa
         
         //Gelecek olan verinin boş olup olmadığını kontrol ediyoruz.
         if choisenToDo != "" {
+            saveButton.isHidden = true
+            updateButton.isHidden = false
             //AppDelegate.swift dosyasına ulaşıyoruz.
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let context = appDelegate.persistentContainer.viewContext
@@ -61,7 +65,11 @@ class AddToDoController: UIViewController, UIImagePickerControllerDelegate, UINa
                 print("Error")
             }
         }
-        
+        else{
+            //Save Button tıklanamaz yapıyoruz.
+            saveButton.isEnabled = false
+            updateButton.isHidden = true
+        }
         //Herhangi bir objeye tıklanabilirlik özelliği vermek istiyorsak GestureRecognizer oluşturmamız gerekiyor
         let gestureHandler = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         //Oluşturduğumuz recognizer'ı herhangi bir objeye eklemek için addGestureRecognizer dememiz gerekiyor
@@ -89,6 +97,7 @@ class AddToDoController: UIViewController, UIImagePickerControllerDelegate, UINa
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         //Resmin hangi türde seçmek istediğimizi belirtiyoruz. Orjinal halimi yoksa editlenmiş hali mi vs..
         image.image = info[.originalImage] as? UIImage
+        saveButton.isEnabled = true
         //Tüm işlemler bittikten sonra picker penceresini kapatıyoruz.
         self.dismiss(animated: true, completion: nil)
     }
@@ -121,6 +130,41 @@ class AddToDoController: UIViewController, UIImagePickerControllerDelegate, UINa
             NotificationCenter.default.post(name: NSNotification.Name("newData"), object: nil)
             //Bir önceki sahneye dönmek için navigationController'ın popViewController fonksiyonu kullanılıyor.
             self.navigationController?.popViewController(animated: true)
+        }
+        catch{
+            print("Error")
+        }
+    }
+    @IBAction func updateClicked(_ sender: Any) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let fetchResult = NSFetchRequest<NSFetchRequestResult>(entityName: "ToDoList")
+        let idString = choisenToDoID?.uuidString
+        fetchResult.predicate = NSPredicate(format: "id = %@", idString!)
+        
+        do{
+            let result = try context.fetch(fetchResult)
+            if result.count > 0{
+                for item in result as! [NSManagedObject]{
+                    item.setValue(choisenToDoID, forKey: "id")
+                    item.setValue(titleText.text, forKey: "title")
+                    item.setValue(contentText.text, forKey: "content")
+                    let imageData = image.image?.jpegData(compressionQuality: 0.5)
+                    item.setValue(imageData, forKey: "image")
+                    
+                    do{
+                        try context.save()
+                        //Notification fonksiyonu başka bir viewController'a bir bildirim göndermek için kullanılıyor.
+                        NotificationCenter.default.post(name: NSNotification.Name("newData"), object: nil)
+                        //Bir önceki sahneye dönmek için navigationController'ın popViewController fonksiyonu kullanılıyor.
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    catch{
+                        print("Update Error")
+                    }
+                }
+            }
         }
         catch{
             print("Error")
