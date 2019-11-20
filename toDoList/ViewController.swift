@@ -90,7 +90,51 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         //Başka bir controller'a yönlendirmek için kullanıyoruz.
         performSegue(withIdentifier: "addToDoVC", sender: nil)
     }
-    
+    //TableView de herhangi bir satırı sola çekerek silme işlemi yaptırıyoruz.
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        //editingStyle parametre kontrolü yapıyoruz. Eğer parametrede ki değer delete ise silme işlemlerini gerçekleştir diyoruz.
+        if editingStyle == .delete {
+            //AppDelegate.swift dosyasına erişim sağlıyoruz.
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appDelegate.persistentContainer.viewContext
+            //CoreData'mızda ki entity'mize ulaşıyoruz.
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ToDoList")
+            let idString = idArray[indexPath.row].uuidString
+            //Sorgu cümlemizi yazıyoruz.
+            fetchRequest.predicate = NSPredicate(format: "id = %@", idString)
+            fetchRequest.returnsObjectsAsFaults = false
+            
+            do{
+                let result = try context.fetch(fetchRequest)
+                if result.count > 0{
+                    for item in result as! [NSManagedObject] {
+                        if let id = item.value(forKey: "id") as? UUID{
+                            if id == idArray[indexPath.row]{
+                                //CoreData'dan silme işlemi yapmak için context'de bulunan delete fonksiyonuna NSManagedObject göndermemiz gerekiyor.
+                                context.delete(item)
+                                titleArray.remove(at: indexPath.row)
+                                idArray.remove(at: indexPath.row)
+                                //TableView'de ki verileri tekrar refresh ediyoruz.
+                                self.tableView.reloadData()
+                                
+                                do{
+                                    try context.save()
+                                }
+                                catch{
+                                    print("Delete Error")
+                                }
+                                
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+            catch{
+                print("Error")
+            }
+        }
+    }
     //Yönlendirme işlemi yapılmadan hemen önce yapılmasını istediğimiz işlemler için prepare fonksiyonu kullanıyoruz.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Yönlendireceğimiz sayfanın identifier değerini kontrol ediyoruz. Bunun sebebi bir başka sayfanın identifier değeri ile çakışıp herhangi bir hata,
