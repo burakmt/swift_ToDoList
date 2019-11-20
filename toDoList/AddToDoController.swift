@@ -14,8 +14,53 @@ class AddToDoController: UIViewController, UIImagePickerControllerDelegate, UINa
     @IBOutlet weak var image: UIImageView!
     @IBOutlet weak var titleText: UITextField!
     @IBOutlet weak var contentText: UITextField!
+    
+    var choisenToDo = ""
+    var choisenToDoID : UUID?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Gelecek olan verinin boş olup olmadığını kontrol ediyoruz.
+        if choisenToDo != "" {
+            //AppDelegate.swift dosyasına ulaşıyoruz.
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appDelegate.persistentContainer.viewContext
+            //İstek atacağımız entity'i belirliyoruz.
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ToDoList")
+            fetchRequest.returnsObjectsAsFaults = false
+            //Gelen ID'yi optional olmadan string bir ifadeye çeviriyoruz. (!) choisenToDoID değişkenini ! işareti ile yaptık çünkü ? işareti kullanılırsa
+            //çıktı olarak optional(.....) şeklinde verdiği için filtreleme işlemi hatalı çalışıyor.
+            let stringUUID = choisenToDoID!.uuidString
+            //Filtreleme işlemi için predicate istek atıyoruz ve attribute ekleyebilmek için ise NSPredicate class'ını çağırıyoruz.
+            //Attribute tanımlarken %@ işaretleri kullanılıyor
+            fetchRequest.predicate = NSPredicate(format: "id = %@", stringUUID)
+            do{
+                //Verileri çekiyoruz.
+                let result = try context.fetch(fetchRequest)
+                //Çekilen veri var mı yok mu diye kontrol ediyoruz.
+                if result.count > 0 {
+                    //Çekilen verileri işleyebilmek için result değerimizi NSManagedObject tipine CAST etmemiz gerekiyor.
+                    for item in result as! [NSManagedObject] {
+                        if let entityTitleText = item.value(forKey: "title") as? String{
+                            titleText.text = entityTitleText
+                        }
+                        if let entityContentText = item.value(forKey: "content") as? String{
+                            contentText.text = entityContentText
+                        }
+                        //Resimi CoreData'ya BinaryData tipinde kayıt ettiğimizden dolayı resimi ilk önce Data tipine CAST etmemiz gerekiyor
+                        if let entityImageData = item.value(forKey: "image") as? Data{
+                            //Ardından CAST ettiğimiz değeri UIImage formatına dönüştürmemiz gerekiyor.
+                            let imageData = UIImage(data: entityImageData)
+                            image.image = imageData
+                        }
+                    }
+                }
+            }
+            catch{
+                print("Error")
+            }
+        }
         
         //Herhangi bir objeye tıklanabilirlik özelliği vermek istiyorsak GestureRecognizer oluşturmamız gerekiyor
         let gestureHandler = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
