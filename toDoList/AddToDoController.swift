@@ -74,6 +74,7 @@ class AddToDoController: UIViewController, UIImagePickerControllerDelegate, UINa
             try context.save()
             //Notification fonksiyonu başka bir viewController'a bir bildirim göndermek için kullanılıyor.
             NotificationCenter.default.post(name: NSNotification.Name("newData"), object: nil)
+            //Bir önceki sahneye dönmek için navigationController'ın popViewController fonksiyonu kullanılıyor.
             self.navigationController?.popViewController(animated: true)
         }
         catch{
